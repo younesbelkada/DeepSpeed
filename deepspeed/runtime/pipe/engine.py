@@ -800,9 +800,15 @@ class PipelineEngine(DeepSpeedEngine):
                 assert isinstance(batch[0], tuple)
                 # Assume list or tuple
                 loaded = []
-                print(batch)
+                # print(batch[0].__class__.__name__)
+                # print(batch[1])
+                # print(len(batch[0]))
                 for x in batch[0]:
-                    print(x[0].shape)
+                    # print(len(x))
+                    # print(x[0].shape)
+                    # print(x.__class__.__name__)
+                    if x.__class__ == tuple:
+                        x = x[0]
                     assert torch.is_tensor(x)
                     mine = x.clone().detach().to(self.device)
                     mine.requires_grad = mine.is_floating_point()

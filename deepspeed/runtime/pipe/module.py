@@ -327,8 +327,9 @@ class PipelineModule(nn.Module):
                             self.seed_fn(new_seed)
                         else:
                             ds_utils.set_random_seed(new_seed)
-
+                    print(idx)
                     inputs = layer(inputs)
+                print("je suis la", idx)
                 return inputs
 
             return exec_func
@@ -336,6 +337,7 @@ class PipelineModule(nn.Module):
         if self.activation_checkpoint_interval == 0:
             func = exec_range_func(0, len(self.forward_funcs))
             x = func(forward_input)
+            print("hey")
         else:
             num_layers = len(self.forward_funcs)
             x = forward_input
@@ -356,6 +358,7 @@ class PipelineModule(nn.Module):
                         *x)
                 else:
                     x = exec_range_func(start_idx, end_idx)(*x)
+                print("hey", start_idx)
         return x
 
     def _partition_layers(self, method='uniform'):

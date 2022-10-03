@@ -686,7 +686,10 @@ class PipelineEngine(DeepSpeedEngine):
         if self.is_last_stage():
             if self._compute_loss and self.module.loss_fn is not None:
                 labels = self.pipe_buffers['labels'][buffer_id]
-                self.loss = self.module.loss_fn(outputs, labels)
+                # print(self.pipe_buffers.keys())
+                teacher_logits = self.pipe_buffers['inputs'][buffer_id][-1]
+                # print(teacher_logits.shape)
+                self.loss = self.module.loss_fn(outputs, labels, teacher_logits)
             else:
                 # Some models just return loss from forward()
                 self.loss = outputs
@@ -797,7 +800,9 @@ class PipelineEngine(DeepSpeedEngine):
                 assert isinstance(batch[0], tuple)
                 # Assume list or tuple
                 loaded = []
+                print(batch)
                 for x in batch[0]:
+                    print(x[0].shape)
                     assert torch.is_tensor(x)
                     mine = x.clone().detach().to(self.device)
                     mine.requires_grad = mine.is_floating_point()
